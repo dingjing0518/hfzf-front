@@ -32,7 +32,21 @@
         var arr = stateStr.split(",");
         parkId = arr[0];
         outId = arr[1];
-        add();
+        alert(code);
+        $.ajax({
+            // url: "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + appid + "&secret=" + appSecret + "&code=" + code + "&grant_type=authorization_code",
+            url: "http://hfzf.jinshipark.com/hfzf-api/wxApi/getOpenId?code" + code,
+            type: "GET",
+            success: function (data) {
+                alert("success");
+                alert(data);
+            },
+            error: function (err) {
+                alert("err");
+                alert(err);
+            },
+        });
+        // add();
     } else {
         var browser = navigator.userAgent.toLowerCase();
         if (browser.match(/Alipay/i) == "alipay") {
@@ -42,9 +56,6 @@
             state = parkId + "," + outId;
             let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + urlNow + '&response_type=code&scope=' + scope + '&state=' + encodeURIComponent(state) + '&connect_redirect=1#wechat_redirect';
             window.location.replace(url);
-            // alert("微信app的浏览器");
-        } else {
-            // alert("其它浏览器");
         }
     }
 
@@ -69,6 +80,8 @@
             success: function (data) {
                 if (data.status === 500) {
                     window.location.href = './error.html?msg=' + encodeURIComponent(data.msg);
+                }else if(data.status === 200){
+                    window.location.href ='./pay.html';
                 }
             },
             error: function (err) {
