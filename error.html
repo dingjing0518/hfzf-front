@@ -24,7 +24,7 @@
     <div id="error-content">
         <div class="error-img">
             <img src="error.png" alt="">
-<!--            <p class="error-p"><span>此车牌已增加,请勿重复提交</span></p>-->
+            <!--            <p class="error-p"><span>此车牌已增加,请勿重复提交</span></p>-->
         </div>
         <div class="error_info" id="error_info">
             <!--            <p>车牌号：<span>苏EH7H99</span></p>-->
@@ -42,72 +42,73 @@
 <script>
     $("#useHead").attr("src", "http://syq.jinshipark.com/images/yhq-error1.jpg");
     $("#useFoot").attr("src", "http://syq.jinshipark.com/images/yhq-error2.jpg");
-    let starttime = "";// 开始时间
-    let endtime = "";   // 结束时间
-    let dataTimeNUmber = new Date();  //现在的时间
-    let fmt = "YYYY-mm-dd HH:MM";
-    let carNum = decodeURIComponent(getQueryVariable('carNum'));
+    // let starttime = "";// 开始时间
+    // let endtime = "";   // 结束时间
+    // let dataTimeNUmber = new Date();  //现在的时间
+    // let fmt = "YYYY-mm-dd HH:MM";
+    // let carNum = decodeURIComponent(getQueryVariable('carNum'));
     let msg = decodeURIComponent(getQueryVariable('msg'));
-    let type = getQueryVariable('type');
-    function add() {
-        var id = getQueryVariable('id');
-        var prarm = {
-            "id": Number(id),
-        };
-        $.ajax({
-            url: "http://api.jinshipark.com/yhq-war/shopCouponManager/selectParkCouponById",
-            contentType: "application/json",
-            dataType: "json",
-            type: "POST",
-            data: JSON.stringify(prarm),
-            success: function (data) {
-                if (data.data.status === 200) {
-                    if (type === 0) {
-                        $("#error_info").append(" " +
-                            "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
-                            "            <p>优惠券类型：<span>全免券</span></p>\n" +
-                            "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
-                            "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
-                            "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
-                            "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
-                    } else if (type === 1) {
-                        $("#error_info").append(" " +
-                            "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
-                            "            <p>优惠券类型：<span>减免时长</span></p>\n" +
-                            "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
-                            "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
-                            "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
-                            "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
-                    } else if (type === 2) {
-                        $("#error_info").append(" " +
-                            "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
-                            "            <p>优惠券类型：<span>减免金额</span></p>\n" +
-                            "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
-                            "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
-                            "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
-                            "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
-                    } else {
-                        $("#error_info").append(" " +
-                            "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
-                            "            <p>优惠券类型：<span>当天有效全免劵</span></p>\n" +
-                            "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
-                            "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
-                            "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
-                            "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
-                    }
-                }
-            },
-            error: function (data) {
-                alert(data)
-            },
-        });
-    }
+    // let msg = '此出口未查询到车辆';
+    // let type = getQueryVariable('type');
+    // function add() {
+    //     var id = getQueryVariable('id');
+    //     var prarm = {
+    //         "id": Number(id),
+    //     };
+    //     $.ajax({
+    //         url: "http://api.jinshipark.com/yhq-war/shopCouponManager/selectParkCouponById",
+    //         contentType: "application/json",
+    //         dataType: "json",
+    //         type: "POST",
+    //         data: JSON.stringify(prarm),
+    //         success: function (data) {
+    //             if (data.data.status === 200) {
+    //                 if (type === 0) {
+    //                     $("#error_info").append(" " +
+    //                         "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
+    //                         "            <p>优惠券类型：<span>全免券</span></p>\n" +
+    //                         "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
+    //                         "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
+    //                         "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
+    //                         "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
+    //                 } else if (type === 1) {
+    //                     $("#error_info").append(" " +
+    //                         "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
+    //                         "            <p>优惠券类型：<span>减免时长</span></p>\n" +
+    //                         "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
+    //                         "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
+    //                         "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
+    //                         "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
+    //                 } else if (type === 2) {
+    //                     $("#error_info").append(" " +
+    //                         "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
+    //                         "            <p>优惠券类型：<span>减免金额</span></p>\n" +
+    //                         "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
+    //                         "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
+    //                         "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
+    //                         "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
+    //                 } else {
+    //                     $("#error_info").append(" " +
+    //                         "            <p>车牌号：<span>" + carNum + "</span></p>\n" +
+    //                         "            <p>优惠券类型：<span>当天有效全免劵</span></p>\n" +
+    //                         "            <p>当前时间：<span>" + dateFormat(fmt, dataTimeNUmber) + "</span></p>\n" +
+    //                         "            <p>开始日期：<span>" + dateFormat(fmt, new Date(data.data.data.startdate)) + "</span></p>\n" +
+    //                         "            <p>结束日期：<span>" + dateFormat(fmt, new Date(data.data.data.enddate)) + "</span></p>\n" +
+    //                         "            <p>使用时段：<span>" + data.data.data.starttime + "-" + data.data.data.endtime + "</span></p>");
+    //                 }
+    //             }
+    //         },
+    //         error: function (data) {
+    //             alert(data)
+    //         },
+    //     });
+    // }
 
     if (msg === "此出口未查询到车辆") {
         $(".error-img").append(" <p class=\"error-pp\"><span>" + msg + "</span></p>");
     } else {
         $(".error-img").append(" <p class=\"error-p\"><span>" + msg + "</span></p>");
-        add();
+        // add();
     }
 
 
