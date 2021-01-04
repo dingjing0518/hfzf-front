@@ -90,22 +90,21 @@
     let nowTime = new Date();  //现在的时间
     let fmt = "YYYY-mm-dd HH:MM";
     let lpOrderId = "";
-    let appid = "wxf8d4e15b5a5a1ea0";
-    let urlNow = "http://out.jinshipark.com/pay.html";
-    let appSecret = "85a2981bc195f7a3a1cc38f473f846c3";
-    let scope = "snsapi_base";
+    let search = window.location.search;
+    let parkId = getSearchString('parkId', search);
+    let outId = getSearchString('outId', search);
+    let openId = getSearchString('openId', search);
+    let params = '';
     //去支付
     var pay = document.getElementById('pay');
     pay.onclick = function () {
-        var params = {
-            pay_amt: document.getElementById('payNum').innerHTML,
-            // lpInboundTime: document.getElementById('intoTime').innerHTML,
-            // lpLincensePlateIdCar: document.getElementById('plateNumber').innerHTML,
-            order_no: lpOrderId
-        };
-        var browser = navigator.userAgent.toLowerCase();
-        if (browser.match(/Alipay/i) == "alipay") {
-            // alert("支付宝app的浏览器");
+
+        if (openId === undefined || openId === '') {
+            //支付宝
+            params = {
+                pay_amt: document.getElementById('payNum').innerHTML,
+                order_no: lpOrderId
+            };
             $.ajax({
                 url: "http://hfzf.jinshipark.com/hfzf-api/adapay/alipayExecutePayment",
                 // url: "http://localhost:8090/adapay/alipayExecutePayment",
@@ -122,36 +121,57 @@
                     console.log(res)
                 }
             });
-        } else if (browser.match(/MicroMessenger/i) == "micromessenger") {
-            let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+appid+'&redirect_uri='+urlNow+'&response_type=code&scope='+scope+'&state=STATE&connect_redirect=1#wechat_redirect`;
-            window.location.replace(url);
-            // alert("微信app的浏览器");
         } else {
-            // alert("其它浏览器");
+            //微信
+            params = {
+                pay_amt: document.getElementById('payNum').innerHTML,
+                order_no: lpOrderId,
+                open_id: openId
+            };
+            $.ajax({
+                url: "http://hfzf.jinshipark.com/hfzf-api/adapay/wxPubExecutePayment",
+                // url: "http://localhost:8090/adapay/alipayExecutePayment",
+                contentType: "application/json",
+                dataType: "json",
+                type: "POST",
+                data: JSON.stringify(params),
+                success: function (res) {
+                    if (res.status === 200) {
+                        window.location.href = res.data.expend.pay_info;
+
+                        function onBridgeReady() {
+                            WeixinJSBridge.invoke(
+                                'getBrandWCPayRequest', res.data.expend.pay_info,
+                                function (res) {
+                                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                                        // 使用以上方式判断前端返回,微信团队郑重提示：
+                                        //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                                    }
+                                });
+                        }
+                        if (typeof WeixinJSBridge == "undefined") {
+                            if (document.addEventListener) {
+                                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                            } else if (document.attachEvent) {
+                                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                            }
+                        } else {
+                            onBridgeReady();
+                        }
+                    }
+                },
+                err: function (res) {
+                    console.log(res)
+                }
+            });
         }
     };
 
     function add() {
         var search = window.location.search;
-        var code = getSearchString('code', search); //结果：18
-        alert("code");
         var parkId = getSearchString('parkId', search); //结果：18
         var outId = getSearchString('outId', search); //结果：2
-        // 添加A标签
-        function getSearchString(key, Url) {
-            var str = Url;
-            str = str.substring(1, str.length); // 获取URL中?之后的字符（去掉第一位的问号）
-            // 以&分隔字符串，获得类似name=xiaoli这样的元素数组
-            var arr = str.split("&");
-            var obj = new Object();
-            // 将每一个数组元素以=分隔并赋给obj对象
-            for (var i = 0; i < arr.length; i++) {
-                var tmp_arr = arr[i].split("=");
-                obj[decodeURIComponent(tmp_arr[0])] = decodeURIComponent(tmp_arr[1]);
-            }
-            return obj[key];
-        }
-
         var param = {
             "lpParkingName": Number(parkId),
             "lpDepartureCname": String(outId)
@@ -164,11 +184,9 @@
             type: "POST",
             data: JSON.stringify(param),
             success: function (data) {
-                console.log(data);
                 if (data.status === 200) {
                     var Car = document.getElementById('noCar');
                     Car.style.display = 'none';
-                    console.log(data.data.lpOrderId);
                     lpOrderId = data.data.lpOrderId;
                     //车牌号
                     document.getElementById('plateNumber').innerHTML = data.data.lpLincensePlateIdCar;
@@ -182,29 +200,27 @@
                     document.getElementById('payNum').innerHTML = data.data.lpParkingCost;
                     // document.getElementById('aaa').innerText = data.data.lpParkingName
                 }
-                // if(data.msg){
-                //     document.getElementById('getCar').style.display = 'none'
-                //     var noDiv = document.getElementById('noCar')
-                // }else {
-                //     var Car = document.getElementById('noCar')
-                //     Car.style.display='none'
-                //     document.getElementById('plateNumber').innerHTML = data.lpLincensePlateIdCar
-                //     document.getElementById('intoTime').innerHTML = data.lpInboundTime
-                //     document.getElementById('goOutTime').innerHTML =getdate()
-                //     var abc = getdate()
-                //     document.getElementById('stopTime').innerHTML = DateMinus(data.lpInboundTime,abc)
-                //     document.getElementById('payNum').innerHTML = data.amount
-                //     document.getElementById('aaa').innerText = data.lpParkingName
-                // }
-
             },
             error: function (err) {
                 console.log(err)
 
             },
         });
+    }
 
-    };
+    function getSearchString(key, Url) {
+        var str = Url;
+        str = str.substring(1, str.length); // 获取URL中?之后的字符（去掉第一位的问号）
+        // 以&分隔字符串，获得类似name=xiaoli这样的元素数组
+        var arr = str.split("&");
+        var obj = new Object();
+        // 将每一个数组元素以=分隔并赋给obj对象
+        for (var i = 0; i < arr.length; i++) {
+            var tmp_arr = arr[i].split("=");
+            obj[decodeURIComponent(tmp_arr[0])] = decodeURIComponent(tmp_arr[1]);
+        }
+        return obj[key];
+    }
 
     //获取当前 时间
     function getdate() {
