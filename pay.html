@@ -137,8 +137,6 @@
                 data: JSON.stringify(params),
                 success: function (res) {
                     if (res.status === 200) {
-                        window.location.href = res.data.expend.pay_info;
-
                         function onBridgeReady() {
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest', res.data.expend.pay_info,
@@ -149,6 +147,7 @@
                                     }
                                 });
                         }
+
                         if (typeof WeixinJSBridge == "undefined") {
                             if (document.addEventListener) {
                                 document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
