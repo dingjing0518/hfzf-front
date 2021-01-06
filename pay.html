@@ -98,7 +98,6 @@
     //去支付
     var pay = document.getElementById('pay');
     pay.onclick = function () {
-
         if (openId === undefined || openId === '') {
             //支付宝
             params = {
@@ -137,9 +136,18 @@
                 data: JSON.stringify(params),
                 success: function (res) {
                     if (res.status === 200) {
-                        function onBridgeReady() {
+                        let jsStr = res.data;
+
+                        function onBridgeReady(jsStr) {
                             WeixinJSBridge.invoke(
-                                'getBrandWCPayRequest', res.data.expend.pay_info,
+                                'getBrandWCPayRequest', {
+                                    "appId": jsStr.appId,
+                                    "timeStamp": jsStr.timeStamp,
+                                    "nonceStr": jsStr.nonceStr,
+                                    "package": jsStr.package,
+                                    "signType": jsStr.signType,
+                                    "paySign": jsStr.paySign
+                                },
                                 function (res) {
                                     if (res.err_msg == "get_brand_wcpay_request:ok") {
                                         // 使用以上方式判断前端返回,微信团队郑重提示：
@@ -150,13 +158,13 @@
 
                         if (typeof WeixinJSBridge == "undefined") {
                             if (document.addEventListener) {
-                                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                                document.addEventListener('WeixinJSBridgeReady', onBridgeReady(jsStr), false);
                             } else if (document.attachEvent) {
-                                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-                                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                                document.attachEvent('WeixinJSBridgeReady', onBridgeReady(jsStr));
+                                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady(jsStr));
                             }
                         } else {
-                            onBridgeReady();
+                            onBridgeReady(jsStr);
                         }
                     }
                 },

@@ -43,6 +43,7 @@
             success: function (data) {
                 if (data.status === 200) {
                     openId = data.data;
+                    add();
                 } else {
                     window.location.href = './error.html?msg=' + encodeURIComponent(data.msg);
                 }
@@ -51,7 +52,6 @@
 
             },
         });
-        add();
     } else {
         var browser = navigator.userAgent.toLowerCase();
         if (browser.match(/Alipay/i) == "alipay") {
