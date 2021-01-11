@@ -102,7 +102,9 @@
             //支付宝
             params = {
                 pay_amt: document.getElementById('payNum').innerHTML,
-                order_no: lpOrderId
+                order_no: lpOrderId,
+				parkId:parkId,
+				plate:document.getElementById('plateNumber').innerHTML
             };
             $.ajax({
                 url: "http://hfzf.jinshipark.com/hfzf-api/adapay/alipayExecutePayment",
@@ -125,7 +127,9 @@
             params = {
                 pay_amt: document.getElementById('payNum').innerHTML,
                 order_no: lpOrderId,
-                open_id: openId
+                open_id: openId,
+				parkId:parkId,
+				plate:document.getElementById('plateNumber').innerHTML
             };
             $.ajax({
                 url: "http://hfzf.jinshipark.com/hfzf-api/adapay/wxPubExecutePayment",
@@ -166,7 +170,9 @@
                         } else {
                             onBridgeReady(jsStr);
                         }
-                    }
+                    }else if(res.status === 500){
+						window.location.href = './error.html?msg=' + encodeURIComponent(data.msg);
+					}
                 },
                 err: function (res) {
                     console.log(res)
