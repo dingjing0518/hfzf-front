@@ -7,13 +7,15 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="./libs/style.add.css" type="text/css">
     <script src="libs/jquery.min.js"></script>
 </head>
 <style>
     .box {
-        width: 100%;
+        width: 90%;
         height: 45px;
         display: flex;
+        margin-left: 5%;
     }
 
     .box p {
@@ -38,7 +40,7 @@
         height: 40px;
         text-align: center;
         line-height: 40px;
-        margin-top: 60px;
+        margin-top: 5%;
     }
 
     .goPay button {
@@ -47,6 +49,14 @@
         color: rgb(32, 158, 53);
         font-size: 20px;
     }
+
+    #getCar {
+        margin-top: 15%;
+    }
+
+    #useFoot {
+        margin-bottom: 5%;
+    }
 </style>
 
 <body>
@@ -54,47 +64,60 @@
 <!-- <div class="divv">
     <img src="http://www.visionunion.com/admin/data/file/img/20191126/20191126000605.gif" alt="">
 </div>  -->
-<div id='getCar'>
-    <div class="box">
-        <p>车牌号:</p>
-        <p id='plateNumber'></p>
+<div id="container">
+    <div class="icon-divv">
+        <a href="https://www.baidu.com"><img id="useHead" alt=""></a>
     </div>
-    <div class="box">
-        <p>入场时间:</p>
-        <p id='intoTime'></p>
+    <div id="carLicenseBox">
+        <div id='getCar'>
+            <div class="box">
+                <p>车牌号:</p>
+                <p id='plateNumber'></p>
+            </div>
+            <div class="box">
+                <p>入场时间:</p>
+                <p id='intoTime'></p>
+            </div>
+            <div class="box">
+                <p>出场时间:</p>
+                <p id='goOutTime'></p>
+            </div>
+            <div class="box">
+                <p>停车时长:</p>
+                <p id='stopTime'></p>
+            </div>
+            <div class="box">
+                <p>支付金额:</p>
+                <p id='payNum'></p>
+            </div>
+            <div class="goPay">
+                <button id="pay">支&nbsp&nbsp&nbsp付</button>
+            </div>
+        </div>
     </div>
-    <div class="box">
-        <p>出场时间:</p>
-        <p id='goOutTime'></p>
+    <div class="icon-divv">
+        <a href="https://www.baidu.com"><img id="useFoot" alt=""></a>
     </div>
-    <div class="box">
-        <p>停车时长:</p>
-        <p id='stopTime'></p>
+    <!--    <div style="text-align: center;" id='noCar'>-->
+    <!--        <h2>未查到此车辆</h2>-->
+    <!--    </div>-->
+    <div style="display: none;">
+        <p id="aaa"></p>
     </div>
-    <div class="box">
-        <p>支付金额:</p>
-        <p id='payNum'></p>
-    </div>
-    <div class="goPay">
-        <button id="pay">支&nbsp&nbsp&nbsp付</button>
-    </div>
-</div>
-<div style="text-align: center;" id='noCar'>
-    <h2>未查到此车辆</h2>
-</div>
-<div style="display: none;">
-    <p id="aaa"></p>
 </div>
 </body>
 <script>
     let nowTime = new Date();  //现在的时间
     let fmt = "YYYY-mm-dd HH:MM";
+    let fmt2 = "YYYYmmddHHMM";
     let lpOrderId = "";
     let search = window.location.search;
     let parkId = getSearchString('parkId', search);
     let outId = getSearchString('outId', search);
     let openId = getSearchString('openId', search);
     let params = '';
+    $("#useHead").attr("src", "http://syq.jinshipark.com/images/yhq-error1.jpg");
+    $("#useFoot").attr("src", "http://syq.jinshipark.com/images/yhq-error2.jpg");
     //去支付
     var pay = document.getElementById('pay');
     pay.onclick = function () {
@@ -102,9 +125,9 @@
             //支付宝
             params = {
                 pay_amt: document.getElementById('payNum').innerHTML,
-                order_no: lpOrderId,
-				parkId:parkId,
-				plate:document.getElementById('plateNumber').innerHTML
+                order_no: getOrderId(),
+                parkId: parkId,
+                plate: document.getElementById('plateNumber').innerHTML
             };
             $.ajax({
                 url: "http://hfzf.jinshipark.com/hfzf-api/adapay/alipayExecutePayment",
@@ -126,10 +149,10 @@
             //微信
             params = {
                 pay_amt: document.getElementById('payNum').innerHTML,
-                order_no: lpOrderId,
+                order_no: getOrderId(),
                 open_id: openId,
-				parkId:parkId,
-				plate:document.getElementById('plateNumber').innerHTML
+                parkId: parkId,
+                plate: document.getElementById('plateNumber').innerHTML
             };
             $.ajax({
                 url: "http://hfzf.jinshipark.com/hfzf-api/adapay/wxPubExecutePayment",
@@ -170,9 +193,9 @@
                         } else {
                             onBridgeReady(jsStr);
                         }
-                    }else if(res.status === 500){
-						window.location.href = './error.html?msg=' + encodeURIComponent(data.msg);
-					}
+                    } else if (res.status === 500) {
+                        window.location.href = './error.html?msg=' + encodeURIComponent(res.msg);
+                    }
                 },
                 err: function (res) {
                     console.log(res)
@@ -181,6 +204,10 @@
         }
     };
 
+    function getOrderId() {
+        let plate = document.getElementById('plateNumber').innerHTML;
+        return dateFormat(fmt2, new Date()) + parkId + plate.substring(plate.length - 6, plate.length);
+    }
     function add() {
         var search = window.location.search;
         var parkId = getSearchString('parkId', search); //结果：18
@@ -198,9 +225,6 @@
             data: JSON.stringify(param),
             success: function (data) {
                 if (data.status === 200) {
-                    var Car = document.getElementById('noCar');
-                    Car.style.display = 'none';
-                    lpOrderId = data.data.lpOrderId;
                     //车牌号
                     document.getElementById('plateNumber').innerHTML = data.data.lpLincensePlateIdCar;
                     //进场时间
@@ -211,7 +235,6 @@
                     document.getElementById('stopTime').innerHTML = MinusToDHM(Number(data.data.lpParkingOften));
                     //支付金额
                     document.getElementById('payNum').innerHTML = data.data.lpParkingCost;
-                    // document.getElementById('aaa').innerText = data.data.lpParkingName
                 }
             },
             error: function (err) {
@@ -288,19 +311,43 @@
         }
         return fmt;
     }
-</script>
-<style>
-    /* .divv{
-           width: 100%;
-           height:100%;
-           overflow: hidden;
-           text-align: center;
-           border:1px red solid
-       }
-       .divv>img{
-           width: 100%;
-           margin-top: 200px;
-       } */
-</style>
 
+    setTimer();
+
+    function setTimer() {
+        // setInterval(checkPayResult, 3000);
+    }
+
+    // 查询是否支付成功
+    function checkPayResult() {
+        alert("---");
+        // var orderId = this.orderId;
+        // var userInfo = this.userInfo;
+        //
+        // // 发起请求获得微信支付扫描二维码
+        // var serverUrl = app.serverUrl;
+        // axios.defaults.withCredentials = true;
+        // axios.post(
+        //     serverUrl + '/orders/getPaidOrderInfo?orderId=' + orderId,
+        //     {},
+        //     {
+        //         headers: {
+        //             'headerUserId': userInfo.id,
+        //             'headerUserToken': userInfo.userUniqueToken
+        //         }
+        //     })
+        //     .then(res => {
+        //         if (res.data.status == 200) {
+        //             var orderStatus = res.data.data;
+        //             // console.log(orderStatus);
+        //
+        //             if (orderStatus.orderStatus == 20) {
+        //                 window.location.href = "success.html?orderId=" + orderId + "&orderAmount=" + this.paymentInfo.amount;
+        //             }
+        //         } else {
+        //             alert(res.data.msg);
+        //         }
+        //     });
+    }
+</script>
 </html>
