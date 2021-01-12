@@ -121,12 +121,10 @@
     //去支付
     var pay = document.getElementById('pay');
     pay.onclick = function () {
-        lpOrderId = getOrderId();
         if (openId === undefined || openId === '') {
             //支付宝
             params = {
                 pay_amt: document.getElementById('payNum').innerHTML,
-                order_no: lpOrderId,
                 parkId: parkId,
                 plate: document.getElementById('plateNumber').innerHTML
             };
@@ -150,7 +148,6 @@
             //微信
             params = {
                 pay_amt: document.getElementById('payNum').innerHTML,
-                order_no: lpOrderId,
                 open_id: openId,
                 parkId: parkId,
                 plate: document.getElementById('plateNumber').innerHTML
