@@ -141,8 +141,9 @@
                         query_url = res.data.query_url;
                         // window.location.href = "./outPay2.html?query_url=" + query_url;
                         // window.open(res.data.expend.pay_info);
-                        window.open("./outPay2.html?query_url=" + query_url);
+                        // window.location.href = res.data.expend.pay_info;
                         window.location.href = res.data.expend.pay_info;
+                        window.open("./outPay2.html?query_url=" + query_url);
 
                     }
                 },

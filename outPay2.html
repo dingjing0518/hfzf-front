@@ -39,10 +39,13 @@
     // if (pay_Url !== '' || pay_Url !== undefined) {
     //     window.open(pay_Url);
     // }
-    checkPayResult();
-
+    // 执行在面的代码块会输出什么？
+    setTimeout(function () {
+        checkPayResult();
+    }, 3000);
     // 查询是否支付成功
     function checkPayResult() {
+        // alert("---");
         if (query_url !== '' || query_url !== undefined) {
             $.ajax({
                 type: 'get',
