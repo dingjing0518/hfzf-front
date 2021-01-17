@@ -66,7 +66,9 @@
 </div>  -->
 <div id="container">
     <div class="icon-divv">
-        <a href="https://www.baidu.com"><img id="useHead" alt=""></a>
+        <a id="headA">
+            <img id="useHead" onerror="this.src='http://syq.jinshipark.com/images/yhq-error1.jpg'">
+        </a>
     </div>
     <div id="carLicenseBox">
         <div id='getCar'>
@@ -96,11 +98,10 @@
         </div>
     </div>
     <div class="icon-divv">
-        <a href="https://www.baidu.com"><img id="useFoot" alt=""></a>
+        <a id="footA">
+            <img id="useFoot" onerror="this.src='http://syq.jinshipark.com/images/yhq-error2.jpg'">
+        </a>
     </div>
-    <!--    <div style="text-align: center;" id='noCar'>-->
-    <!--        <h2>未查到此车辆</h2>-->
-    <!--    </div>-->
     <div style="display: none;">
         <p id="aaa"></p>
     </div>
@@ -116,8 +117,54 @@
     let outId = getSearchString('outId', search);
     let openId = getSearchString('openId', search);
     let params = '';
-    $("#useHead").attr("src", "http://syq.jinshipark.com/images/yhq-error1.jpg");
-    $("#useFoot").attr("src", "http://syq.jinshipark.com/images/yhq-error2.jpg");
+    //加载上下广告图片
+    if (parkId !== '' && parkId !== undefined) {
+        getImages();
+    }else {
+        $("#useHead").attr("src", "http://syq.jinshipark.com/images/yhq-success1.jpg");
+        $("#useFoot").attr("src", "http://syq.jinshipark.com/images/yhq-success2.jpg");
+    }
+    //获取
+    function getImages() {
+        // parkId = "3205830001";
+        params = {
+            parkId: parkId,
+            type: "out-First"
+        };
+        $.ajax({
+            url: "http://hfzf.jinshipark.com/hfzf-api/jinshiparkAdvertImage/getJinshiparkAdvertImageByTypeAndArea",
+            // url: "http://localhost:8090/jinshiparkAdvertImage/getJinshiparkAdvertImageByTypeAndArea",
+            contentType: "application/json",
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify(params),
+            success: function (res) {
+                if (res.status === 200) {
+                    for (let i = 0; i < res.data.length; i++) {
+                        if (res.data[i].address === "out-FirstUp") {
+                            if (res.data[i].imagepath != null) {
+                                $("#useHead").attr("src", res.data[i].imagepath);
+                            }
+                            if (res.data[i].weblink != null) {
+                                document.getElementById("headA").href = res.data[i].weblink;
+                            }
+                        } else if (res.data[i].address === "out-FirstDown") {
+                            if (res.data[i].imagepath != null) {
+                                $("#useFoot").attr("src", res.data[i].imagepath);
+                            }
+                            if (res.data[i].weblink != null) {
+                                document.getElementById("footA").href = res.data[i].weblink;
+                            }
+                        }
+                    }
+                }
+            },
+            err: function (res) {
+                console.log(res)
+            }
+        });
+    }
+
     //去支付
     var pay = document.getElementById('pay');
     pay.onclick = function () {
@@ -206,6 +253,7 @@
         let plate = document.getElementById('plateNumber').innerHTML;
         return dateFormat(fmt2, new Date()) + parkId + plate.substring(plate.length - 6, plate.length);
     }
+
     function add() {
         var search = window.location.search;
         var parkId = getSearchString('parkId', search); //结果：18

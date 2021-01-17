@@ -84,7 +84,7 @@
             data: JSON.stringify(param),
             success: function (data) {
                 if (data.status === 500) {
-                    window.location.href = './error.html?msg=' + encodeURIComponent(data.msg);
+                    window.location.href = './error.html?parkId=' + parkId + '&msg=' + encodeURIComponent(data.msg);
                 } else if (data.status === 200) {
                     if (openId === '' || openId === undefined) {
                         window.location.href = './pay.html?parkId=' + parkId + '&outId=' + outId;
